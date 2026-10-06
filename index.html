@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Difficulty Clicker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #101010;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            color: #00aaff;
+            font-size: 40px;
+            margin-top: 30px;
+        }
+
+        #difficultyNumber {
+            font-size: 48px;
+            font-weight: bold;
+            margin-top: 30px;
+        }
+
+        #difficultyName {
+            font-size: 25px;
+            font-weight: bold;
+            margin: 5px;
+        }
+
+        /* =========================
+           GD STYLE CUBE
+           ========================= */
+
+        #cube {
+            width: 160px;
+            height: 160px;
+            margin: 25px auto;
+            position: relative;
+
+            background: #00aaff;
+            border: 8px solid white;
+            border-radius: 12px;
+
+            box-shadow:
+                0 0 0 6px #005577,
+                0 8px 0 #003344;
+
+            transition:
+                background 0.2s,
+                transform 0.2s,
+                box-shadow 0.2s;
+        }
+
+        .eye {
+            position: absolute;
+            width: 32px;
+            height: 42px;
+
+            background: white;
+            border: 6px solid black;
+            border-radius: 4px;
+
+            top: 32px;
+        }
+
+        #leftEye {
+            left: 28px;
+        }
+
+        #rightEye {
+            right: 28px;
+        }
+
+        .eye::after {
+            content: "";
+            position: absolute;
+
+            width: 10px;
+            height: 15px;
+
+            background: black;
+
+            left: 5px;
+            top: 7px;
+        }
+
+        #mouth {
+            position: absolute;
+
+            width: 70px;
+            height: 20px;
+
+            background: black;
+
+            left: 37px;
+            bottom: 28px;
+
+            border-radius: 3px;
+        }
+
+        /* =========================
+           CLICK BUTTON
+           ========================= */
+
+        #clickButton {
+            font-size: 30px;
+            font-weight: bold;
+
+            padding: 22px 60px;
+
+            border: 4px solid white;
+            border-radius: 12px;
+
+            background: #00aaff;
+            color: white;
+
+            cursor: pointer;
+
+            box-shadow: 0 5px 0 #005577;
+
+            transition: 0.1s;
+        }
+
+        #clickButton:hover {
+            background: #0088cc;
+        }
+
+        #clickButton:active {
+            transform: translateY(5px);
+            box-shadow: none;
+        }
+
+        /* =========================
+           UPGRADE BOX
+           ========================= */
+
+        .upgrade {
+            background: #202020;
+
+            border: 2px solid #444;
+
+            border-radius: 15px;
+
+            padding: 20px;
+
+            margin: 30px auto;
+
+            max-width: 420px;
+        }
+
+        .upgrade h2 {
+            margin-top: 0;
+        }
+
+        .upgrade button {
+            padding: 13px 25px;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            border: none;
+            border-radius: 8px;
+
+            background: white;
+            color: black;
+        }
+
+        .upgrade button:hover {
+            background: #cccccc;
+        }
+
+        /* =========================
+           PROGRESS BAR
+           ========================= */
+
+        .progressBox {
+            width: 400px;
+            max-width: 90%;
+
+            height: 20px;
+
+            background: #222;
+
+            border: 2px solid #555;
+
+            border-radius: 10px;
+
+            margin: 20px auto;
+
+            overflow: hidden;
+        }
+
+        #progress {
+            width: 0%;
+
+            height: 100%;
+
+            background: #00aaff;
+
+            transition: width 0.2s;
+        }
+
+        /* =========================
+           WIN SCREEN
+           ========================= */
+
+        #winScreen {
+            display: none;
+
+            position: fixed;
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background: #101010;
+
+            z-index: 1000;
+
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        #winScreen h2 {
+            font-size: 80px;
+            color: #00ff66;
+
+            margin: 0 0 20px 0;
+
+            text-shadow:
+                0 0 10px #00ff66,
+                0 0 30px #00ff66;
+        }
+
+        #winScreen p {
+            font-size: 28px;
+            margin: 10px;
+        }
+
+        #restartButton {
+            margin-top: 30px;
+
+            padding: 18px 40px;
+
+            font-size: 22px;
+            font-weight: bold;
+
+            border: 4px solid white;
+            border-radius: 10px;
+
+            background: #00aaff;
+            color: white;
+
+            cursor: pointer;
+        }
+
+        #restartButton:hover {
+            background: #0088cc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>⚡ Difficulty Clicker</h1>
+
+    <div id="difficultyNumber">
+        0
+    </div>
+
+    <div id="difficultyName">
+        AUTO
+    </div>
+
+    <div class="progressBox">
+        <div id="progress"></div>
+    </div>
+
+    <!-- GD STYLE CUBE -->
+
+    <div id="cube">
+
+        <div class="eye" id="leftEye"></div>
+
+        <div class="eye" id="rightEye"></div>
+
+        <div id="mouth"></div>
+
+    </div>
+
+    <!-- CLICK BUTTON -->
+
+    <button id="clickButton">
+        CLICK!
+    </button>
+
+    <!-- UPGRADE -->
+
+    <div class="upgrade">
+
+        <h2>⚙️ Better Click</h2>
+
+        <p>
+            Current power:
+            <strong id="power">1</strong>
+        </p>
+
+        <p>
+            Upgrade cost:
+            <strong id="cost">10</strong>
+        </p>
+
+        <button id="upgradeButton">
+            BUY UPGRADE
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         WIN SCREEN
+         ========================= -->
+
+    <div id="winScreen">
+
+        <h2>YOU WIN!</h2>
+
+        <p>🎉 You reached 1,000 Difficulty!</p>
+
+        <p>🏆 Congratulations!</p>
+
+        <button id="restartButton">
+            PLAY AGAIN
+        </button>
+
+    </div>
+
+
+    <script>
+
+        // =========================
+        // GAME VARIABLES
+        // =========================
+
+        let difficulty = 0;
+
+        let clickPower = 1;
+
+        let upgradeCost = 10;
+
+        let gameWon = false;
+
+
+        // =========================
+        // HTML ELEMENTS
+        // =========================
+
+        const number =
+            document.getElementById("difficultyNumber");
+
+        const name =
+            document.getElementById("difficultyName");
+
+        const cube =
+            document.getElementById("cube");
+
+        const power =
+            document.getElementById("power");
+
+        const cost =
+            document.getElementById("cost");
+
+        const progress =
+            document.getElementById("progress");
+
+        const clickButton =
+            document.getElementById("clickButton");
+
+        const upgradeButton =
+            document.getElementById("upgradeButton");
+
+        const winScreen =
+            document.getElementById("winScreen");
+
+        const restartButton =
+            document.getElementById("restartButton");
+
+
+        // =========================
+        // WIN GAME
+        // =========================
+
+        function winGame() {
+
+            gameWon = true;
+
+            difficulty = 1000;
+
+            number.textContent = "1000";
+
+            name.textContent = "YOU WIN!";
+
+            progress.style.width = "100%";
+
+            clickButton.disabled = true;
+
+            upgradeButton.disabled = true;
+
+            winScreen.style.display = "flex";
+
+        }
+
+
+        // =========================
+        // UPDATE GAME
+        // =========================
+
+        function updateGame() {
+
+            number.textContent = difficulty;
+
+            power.textContent = clickPower;
+
+            cost.textContent = upgradeCost;
+
+
+            // =========================
+            // WIN CHECK
+            // =========================
+
+            if (difficulty >= 1000) {
+
+                winGame();
+
+                return;
+
+            }
+
+
+            // =========================
+            // AUTO
+            // =========================
+
+            if (difficulty < 100) {
+
+                name.textContent = "AUTO";
+
+                cube.style.background = "#00aaff";
+
+                cube.style.boxShadow =
+                    "0 0 0 6px #005577, 0 8px 0 #003344";
+
+                cube.style.transform =
+                    "rotate(0deg)";
+
+            }
+
+
+            // =========================
+            // EASY
+            // =========================
+
+            else if (difficulty < 500) {
+
+                name.textContent = "EASY";
+
+                cube.style.background = "#22cc55";
+
+                cube.style.boxShadow =
+                    "0 0 0 6px #08752b, 0 8px 0 #064d1d";
+
+                cube.style.transform =
+                    "rotate(0deg)";
+
+            }
+
+
+            // =========================
+            // NORMAL
+            // =========================
+
+            else if (difficulty < 750) {
+
+                name.textContent = "NORMAL";
+
+                cube.style.background = "#ffee00";
+
+                cube.style.boxShadow =
+                    "0 0 0 6px #998800, 0 8px 0 #665f00";
+
+                cube.style.transform =
+                    "rotate(0deg)";
+
+            }
+
+
+            // =========================
+            // HARD
+            // =========================
+
+            else if (difficulty < 850) {
+
+                name.textContent = "HARD";
+
+                cube.style.background = "#ff8800";
+
+                cube.style.boxShadow =
+                    "0 0 0 6px #994400, 0 8px 0 #663000";
+
+                cube.style.transform =
+                    "rotate(-2deg)";
+
+            }
+
+
+            // =========================
+            // HARDER
+            // =========================
+
+            else if (difficulty < 925) {
+
+                name.textContent = "HARDER";
+
+                cube.style.background = "#ff3333";
+
+                cube.style.boxShadow =
+                    "0 0 0 6px #990000, 0 8px 0 #660000";
+
+                cube.style.transform =
+                    "rotate(2deg)";
+
+            }
+
+
+            // =========================
+            // INSANE
+            // =========================
+
+            else if (difficulty < 975) {
+
+                name.textContent = "INSANE";
+
+                cube.style.background = "#aa44ff";
+
+                cube.style.boxShadow =
+                    "0 0 0 6px #552288, 0 8px 0 #331455";
+
+                cube.style.transform =
+                    "rotate(-4deg)";
+
+            }
+
+
+            // =========================
+            // DEMON
+            // =========================
+
+            else {
+
+                name.textContent = "DEMON";
+
+                cube.style.background = "#ff2222";
+
+                cube.style.boxShadow =
+                    "0 0 0 6px #660000, 0 8px 0 #330000";
+
+                cube.style.transform =
+                    "rotate(5deg)";
+
+            }
+
+
+            // =========================
+            // PROGRESS BAR
+            // =========================
+
+            let progressPercent =
+                (difficulty / 1000) * 100;
+
+            progress.style.width =
+                progressPercent + "%";
+
+        }
+
+
+        // =========================
+        // CLICKING
+        // =========================
+
+        clickButton.addEventListener(
+            "click",
+            function() {
+
+                if (gameWon) return;
+
+                difficulty =
+                    difficulty + clickPower;
+
+                // Don't let the number go past 1000
+
+                if (difficulty >= 1000) {
+
+                    difficulty = 1000;
+
+                    winGame();
+
+                    return;
+
+                }
+
+                updateGame();
+
+            }
+        );
+
+
+        // =========================
+        // UPGRADE
+        // =========================
+
+        upgradeButton.addEventListener(
+            "click",
+            function() {
+
+                if (gameWon) return;
+
+                if (difficulty >= upgradeCost) {
+
+                    difficulty =
+                        difficulty - upgradeCost;
+
+                    clickPower =
+                        clickPower + 1;
+
+                    upgradeCost =
+                        Math.floor(upgradeCost * 1.5);
+
+                    updateGame();
+
+                }
+
+                else {
+
+                    alert(
+                        "You need " +
+                        upgradeCost +
+                        " difficulty!"
+                    );
+
+                }
+
+            }
+        );
+
+
+        // =========================
+        // RESTART
+        // =========================
+
+        restartButton.addEventListener(
+            "click",
+            function() {
+
+                difficulty = 0;
+
+                clickPower = 1;
+
+                upgradeCost = 10;
+
+                gameWon = false;
+
+                clickButton.disabled = false;
+
+                upgradeButton.disabled = false;
+
+                winScreen.style.display = "none";
+
+                updateGame();
+
+            }
+        );
+
+
+        // =========================
+        // START GAME
+        // =========================
+
+        updateGame();
+
+    </script>
+
+</body>
+</html>
